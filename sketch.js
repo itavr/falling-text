@@ -1,6 +1,5 @@
 let font;
 let typing = "";
-let indent;
 let n;
 let letters = [];
 
@@ -10,8 +9,7 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(480, 480);
-  indent = 200;
+  createCanvas(windowWidth, windowHeight);
   n = 16;
   textSize(18);
   textFont(font);
@@ -20,9 +18,9 @@ function setup() {
 function draw() {
   background(0); // רקע שחור
   fill(255); // טקסט לבן
-  textAlign(LEFT);
+  textAlign(CENTER, CENTER);
 
-  text(typing, indent, height / 2);
+  text(typing, width / 2, height / 2);
 
   for (let l of letters) {
     l.update();
@@ -32,7 +30,7 @@ function draw() {
 
 function keyPressed() {
   if (keyCode === ENTER) {
-    let x = indent;
+    let x = width / 2 - textWidth(typing) / 2;
     for (let i = 0; i < typing.length; i++) {
       letters.push(new Letter(x, height / 2, typing.charAt(i)));
       x += textWidth(typing.charAt(i));
@@ -53,7 +51,7 @@ class Letter {
     this.letter = letter;
     this.location = createVector(x, y);
     this.velocity = createVector(random(-1, 1), random(-1, 1)); // מהירות אקראית לכל כיוון
-    this.gravity = createVector(0, 0.001); // גרביטציה קלה מאוד
+    this.gravity = createVector(0, 0.01); // גרביטציה קלה מאוד
   }
 
   display() {
@@ -73,4 +71,8 @@ class Letter {
       this.velocity.y *= -1;
     }
   }
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
 }
