@@ -50,12 +50,14 @@ class Letter {
   constructor(x, y, letter) {
     this.letter = letter;
     this.location = createVector(x, y);
-    this.velocity = createVector(random(-1, 1), random(-1, 1)); // מהירות אקראית לכל כיוון
-    this.gravity = createVector(0, 0.01); // גרביטציה קלה מאוד
+    this.velocity = createVector(random(-0.5, 0.5), random(-0.7, 0.05)); // מהירות אקראית לכל כיוון
+    this.gravity = createVector(0, 0.001); // גרביטציה קלה מאוד
+    this.brightness = random(100, 255); // בהירות התחלית אקראית
+    this.brightnessDirection = random(0.8, 0.09); // שינוי בהירות אקראי
   }
 
   display() {
-    fill(255); // טקסט לבן
+    fill(255, 255, 255, this.brightness); // טקסט לבן עם בהירות משתנה
     text(this.letter, this.location.x, this.location.y);
   }
 
@@ -69,6 +71,12 @@ class Letter {
     }
     if (this.location.y > height || this.location.y < 0) {
       this.velocity.y *= -1;
+    }
+
+    // שינוי בהירות
+    this.brightness += this.brightnessDirection;
+    if (this.brightness > 255 || this.brightness < 100) {
+      this.brightnessDirection *= -1;
     }
   }
 }
