@@ -7,7 +7,8 @@ let questions = [
   "Which planet would you like to visit?",
   "What type of vacation do you prefer?",
   "What's your budget?",
-  "Do you have any additional preferences?"
+  "Do you have any additional preferences?",
+  "Thank you! Let's continue..."
 ];
 let cursorVisible = true;
 let lastBlinkTime = 0;
