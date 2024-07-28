@@ -7,26 +7,21 @@ let questions = [
   "Which planet would you like to visit?",
   "What type of vacation do you prefer?",
   "What's your budget?",
-  "Do you have any additional preferences?",
-  "What is your favorite color?",
-  "Do you enjoy outdoor activities?",
-  "What's your favorite movie genre?",
-  "What's your dream job?",
-  "If you could have a superpower, what would it be?"
+  "Do you have any additional preferences?"
 ];
+let cursorVisible = true;
+let lastBlinkTime = 0;
+const blinkInterval = 530; // מילישניות
 let currentQuestion = 0;
 let fadeInAlpha = 0;
 let fadeInSpeed = 5;
 
 let customColors;
 let questionPos;
-let voiceOvers = [];
 
 function preload() {
+  // טוען את הגופן
   font = loadFont('ploni-light-aaa.otf');
-  for (let i = 0; i < questions.length; i++) {
-    voiceOvers[i] = loadSound(`question${i + 1}.mp3`);
-  }
 }
 
 function setup() {
@@ -35,6 +30,7 @@ function setup() {
   textSize(18);
   textFont(font);
 
+  // הגדרת צבעים מותאמים אישית מהתמונה
   customColors = [
     color(66, 72, 88),    // כהה
     color(255, 255, 255), // לבן
@@ -49,6 +45,7 @@ function setup() {
 function draw() {
   background(0); // רקע שחור
 
+  // אפקט זוהר לשאלה
   push();
   fill(255, fadeInAlpha); // טקסט לבן עם אפקט Fade In
   textAlign(CENTER, CENTER);
@@ -60,24 +57,62 @@ function draw() {
     fadeInAlpha += fadeInSpeed; // אפקט Fade In לשאלה
   }
 
-  fill(255);
+  // אפקט זוהר לטקסט המוקלד
+  push();
+ fill(255);
+  noStroke();
   textAlign(CENTER, CENTER);
-  text(typing, width / 2, height / 2); // הצגת הטקסט המוקלד בפונט ploni
+  text(typing, width / 2, height / 2);
+  pop();
+  
+    // הצגת סמן הכתיבה
+  if (millis() - lastBlinkTime > blinkInterval) {
+    cursorVisible = !cursorVisible;
+    lastBlinkTime = millis();
+  }
+  
+  if (cursorVisible && typing.length < n) {
+    push();  // שומר את ההגדרות הנוכחיות
+    let cursorX = width / 2 + textWidth(typing) / 2;
+    noStroke();
+    strokeWeight(0.001);  // סמן דק יותר
+    line(cursorX, height / 2 - 10, cursorX, height / 2 + 10);
+    pop();  // משחזר את ההגדרות הקודמות
+  }
+  
 
   for (let l of letters) {
     l.update();
     l.display();
   }
 
+  // עדכון מיקום השאלה בהתבסס על תנועת העכבר
   let mouseDistToQuestion = dist(mouseX, mouseY, questionPos.x, questionPos.y);
   if (mouseDistToQuestion < 100) {
     let repel = p5.Vector.sub(questionPos, createVector(mouseX, mouseY));
     repel.setMag(0.02);
     questionPos.add(repel);
   }
+  
+  
+    if (millis() - lastBlinkTime > blinkInterval) {
+    cursorVisible = !cursorVisible;
+    lastBlinkTime = millis();
+  }
+  
+  if (cursorVisible && typing.length < n) {
+    let cursorX = width / 2 + textWidth(typing) / 2;
+    stroke(255);
+    strokeWeight(2);  // שמירה על עובי הקו המקורי
+    line(cursorX, height / 2 - 10, cursorX, height / 2 + 10);
+    noStroke();  // איפוס הגדרות הקו כדי לא להשפיע על שאר הציור
+  }
+  
 }
 
+
 function keyPressed() {
+   cursorVisible = true; // איפוס הסמן בכל לחיצה על מקש
   if (keyCode === ENTER) {
     let x = width / 2 - textWidth(typing) / 2;
     for (let i = 0; i < typing.length; i++) {
@@ -91,15 +126,24 @@ function keyPressed() {
     }
     fadeInAlpha = 0; // Reset Fade In לשאלה החדשה
     questionPos.set(width / 2, height / 3); // איפוס מיקום השאלה
-
-    // הפעלת קובץ הקול לשאלה הנוכחית
-    voiceOvers[currentQuestion].play();
   } else if (keyCode === BACKSPACE) {
     if (typing.length > 0) {
       typing = typing.substring(0, typing.length - 1);
     }
   } else if (key.length === 1 && typing.length <= n) {
     typing += key;
+  }
+  
+  // הצגת סמן הכתיבה
+  if (millis() - lastBlinkTime > blinkInterval) {
+    cursorVisible = !cursorVisible;
+    lastBlinkTime = millis();
+  }
+  
+  if (cursorVisible && typing.length < n) {
+    let cursorX = width / 2 + textWidth(typing) / 2;
+noStroke();
+    line(cursorX, height / 2 - 10, cursorX, height / 2 + 10);
   }
 }
 
